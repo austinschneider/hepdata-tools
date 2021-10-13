@@ -3,7 +3,7 @@ import typing
 
 def named_tuple_to_py(self):
     """Convert named tuples to a primative type representation"""
-    d = self._asdict()
+    d = dict(self._asdict())
     to_del = []
     for k, v in d.items():
         if hasattr(v, "to_py"):
