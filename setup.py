@@ -15,9 +15,12 @@ setup(
     author="Austin Schneider",
     author_email="austin.schneider@icecube.wisc.edu",
     license="LGPL-3.0",
-    packages=["hepdata_tools",
+    packages=[
+        "hepdata_tools",
         "hepdata_tools.text",
-        "hepdata_tools.types"],
+        "hepdata_tools.types",
+        "hepdata_tools.fc",
+    ],
     install_requires=[
         "numpy",
         "scipy",
