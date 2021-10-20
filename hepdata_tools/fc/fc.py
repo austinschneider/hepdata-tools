@@ -31,7 +31,7 @@ def memodict(f, maxsize=1):
 
 
 lam = lambda k, mu: poisson.pmf(k, mu) if (k != 0 or mu != 0) else 1.0
-poisson_pmf = memodict(lam, 2000)
+poisson_pmf = memodict(lam, 50000)
 
 
 def gen_next(info, last, pmf, r):
