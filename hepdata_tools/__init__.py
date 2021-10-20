@@ -1,4 +1,4 @@
-import fc
+from .fc import fc
 
 from .types import Header
 from .types import AsymErrorValue
