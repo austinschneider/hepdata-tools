@@ -50,7 +50,7 @@ class DependentVariable(type_utils.TypeCheck, metaclass=type_utils.NamedTupleMet
 
 class IndependentVariable(type_utils.TypeCheck, metaclass=type_utils.NamedTupleMeta):
     header: Header
-    values: typing.Union[typing.List[Value], typing.List[Bin]]
+    values: typing.List[typing.Union[Value, Bin]]
 
 
 class DataFile(type_utils.TypeCheck, metaclass=type_utils.NamedTupleMeta):

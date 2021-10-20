@@ -151,24 +151,31 @@ def generalized_cov(
     indep_headers = []
     for k in range(n_dims):
         indep_headers.append(Header(bin_names[k], bin_units[k]))
-        indep_values.append([bins[k][per_entry_bin_indices[i][k]] for i in range(n_points)])
+        indep_values.append([(lambda x: Value("") if x is None else bins[k][x])(per_entry_bin_indices[i][k]) for i in range(n_points)])
     if categories is not None:
         assert(len(categories) == n_points)
         cat_header = Header("Category", "")
         n_dims += 1
-        indep_headers(cat_header)
-        indep_values.append(categories)
+        indep_headers.append(cat_header)
+        indep_values.append([Value(cat) for cat in categories])
 
-    cross_indep_headers = indep_headers*2
+    bin_i = []
+    bin_j = []
+    cross_indep_headers = [Header(h.name + " i", h.units) for h in indep_headers]
+    cross_indep_headers += [Header(h.name + " j", h.units) for h in indep_headers]
     cross_indep_values = np.zeros((len(indep_headers) * 2, 0)).tolist()
     cov_values = []
     for i in range(n_points):
         for j in range(n_points):
+            bin_i.apppend(i)
+            bin_j.append(j)
             cov_values.append(Value(float(data[i, j])))
             for k in range(n_dims):
                 cross_indep_values[k].append(indep_values[k][i])
                 cross_indep_values[k + n_dims].append(indep_values[k][j])
-    cross_indeps = [IndependentVariable(header, values) for header, values in zip(cross_indep_headers, cross_indep_values)]
+    bin_i = IndependentVariable(Header("Bin i", ""), bin_i)
+    bin_j = IndependentVariable(Header("Bin i", ""), bin_j)
+    cross_indeps = [bin_i, bin_j] + [IndependentVariable(header, values) for header, values in zip(cross_indep_headers, cross_indep_values)]
 
     dep_header = Header(data_name, data_units)
     dep = DependentVariable(dep_header, cov_values)
