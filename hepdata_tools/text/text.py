@@ -167,7 +167,7 @@ def generalized_cov(
     cov_values = []
     for i in range(n_points):
         for j in range(n_points):
-            bin_i.apppend(i)
+            bin_i.append(i)
             bin_j.append(j)
             cov_values.append(Value(float(data[i, j])))
             for k in range(n_dims):
