@@ -122,6 +122,60 @@ def cov_and_bins(
     return DataFile([indep0, indep1], [dep])
 
 
+def generalized_cov(
+    data_file=None,
+    data_name=None,
+    per_entry_bin_indices=None,  # nxm
+    bin_files=None,  # m
+    bin_names=None,  # m
+    bin_units=None,  # m
+    categories=None,  # n
+    data_units="counts per bin",
+):
+    """Generate a DataFile object from a covariance matrix and bin boundaries.
+    Assumes counts are floating point quantities."""
+    data = np.loadtxt(data_file)
+
+    n_points = len(data)
+
+    if bin_files is None:
+        bin_files = []
+    n_dims = len(bin_files)
+    assert(len(bin_files) == n_dims)
+    assert(len(bin_names) == n_dims)
+    assert(len(bin_units) == n_dims)
+
+    boundaries = [np.loadtxt(bin_file) for bin_file in bin_files]
+    bins = [[Bin(low=float(boundary[i]), high=float(boundary[i + 1])) for i in range(len(boundary)-1)] for boundary in boundaries]
+    indep_values = []
+    indep_headers = []
+    for k in range(n_dims):
+        indep_headers.append(Header(bin_names[k], bin_units[k]))
+        indep_values.append([bins[k][per_entry_bin_indices[i][k]] for i in range(n_points)])
+    if categories is not None:
+        assert(len(categories) == n_points)
+        cat_header = Header("Category", "")
+        n_dims += 1
+        indep_headers(cat_header)
+        indep_values.append(categories)
+
+    cross_indep_headers = indep_headers*2
+    cross_indep_values = np.zeros((len(indep_headers) * 2, 0)).tolist()
+    cov_values = []
+    for i in range(n_points):
+        for j in range(n_points):
+            cov_values.append(Value(float(data[i, j])))
+            for k in range(n_dims):
+                cross_indep_values[k].append(indep_values[k][i])
+                cross_indep_values[k + n_dims].append(indep_values[k][j])
+    cross_indeps = [IndependentVariable(header, values) for header, values in zip(cross_indep_headers, cross_indep_values)]
+
+    dep_header = Header(data_name, data_units)
+    dep = DependentVariable(dep_header, cov_values)
+
+    return DataFile(cross_indeps, [dep])
+
+
 def ntuple(fname=None, column_names=None, column_units=None, is_independent=None):
     """Generate a DataFile object from an ntuple.
     Assumes data points are floating point quantities."""
