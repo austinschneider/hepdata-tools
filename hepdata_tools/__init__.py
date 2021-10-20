@@ -23,3 +23,4 @@ from .text import data_and_bins
 from .text import expect_and_bins
 from .text import cov_and_bins
 from .text import ntuple
+from .text import generalized_cov
