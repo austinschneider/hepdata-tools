@@ -167,14 +167,14 @@ def generalized_cov(
     cov_values = []
     for i in range(n_points):
         for j in range(n_points):
-            bin_i.append(i)
-            bin_j.append(j)
+            bin_i.append(Value(float(i)))
+            bin_j.append(Value(float(j)))
             cov_values.append(Value(float(data[i, j])))
             for k in range(n_dims):
                 cross_indep_values[k].append(indep_values[k][i])
                 cross_indep_values[k + n_dims].append(indep_values[k][j])
     bin_i = IndependentVariable(Header("Bin i", ""), bin_i)
-    bin_j = IndependentVariable(Header("Bin i", ""), bin_j)
+    bin_j = IndependentVariable(Header("Bin j", ""), bin_j)
     cross_indeps = [bin_i, bin_j] + [IndependentVariable(header, values) for header, values in zip(cross_indep_headers, cross_indep_values)]
 
     dep_header = Header(data_name, data_units)
